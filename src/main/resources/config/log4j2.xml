@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" monitorInterval="30"><!--monitorInterval间隔多久自动修改为最新配置-->
+    <properties>
+        <property name="LOG_HOME">D:/log4j/log4j2</property>
+        <property name="FILE_NAME">log4j2</property>
+    </properties>
+    <Appenders>
+
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%highlight{%d{yyyy-MM-dd HH:mm:ss.SSS} [%-10t] %-5level %logger{36} %6L行 ---> %msg%n}{FATAL=red, ERROR=red, WARN=yellow, INFO=blue, DEBUG=white, TRACE=white}"/>
+        </Console>
+
+        <RollingRandomAccessFile name="FILE_NAME" fileName="${LOG_HOME}/${FILE_NAME}.log" filePattern="${LOG_HOME}/$${date:yyyy-MM}/${FILE_NAME}/${FILE_NAME}-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout charset="utf-8" pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%-10t] %-5level %logger{36} %6L行 ---> %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="20"/>
+        </RollingRandomAccessFile>
+    </Appenders>
+    <Loggers>
+        <!-- 第三方日志系统 -->
+        <logger name="org.springframework.core" level="info"/>
+        <logger name="org.springframework.beans" level="info"/>
+        <logger name="org.springframework.context" level="info"/>
+        <logger name="org.springframework.web" level="info"/>
+        <logger name="org.apache.http" level="warn"/>
+
+
+        <Root level="debug">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="FILE_NAME"/>
+        </Root>
+    </Loggers>
+</Configuration>

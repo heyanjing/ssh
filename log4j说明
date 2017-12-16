@@ -1,0 +1,3 @@
+isLog4jContextSelectorNamed 指定是否使用JndiContextSelector选择上下文 。如果isLog4jContextSelectorNamed没有被指定，或者不是true，那么它被假定为false。
+如果isLog4jContextSelectorNamed为true，则必须指定log4jContextName，或者必须在web.xml中指定display-name ; 否则，应用程序将无法启动一个例外。
+如果isLog4jContextSelectorNamed不为true，则可以选择指定log4jConfiguration，并且必须是配置文件的有效URI或路径，或者以“classpath：”开头，表示可以在类路径中找到的配置文件。没有这个参数，Log4j将使用标准的机制来定位配置文件。
