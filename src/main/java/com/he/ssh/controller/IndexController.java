@@ -9,8 +9,24 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class IndexController {
 
-    @GetMapping
+    @GetMapping(value = {"","/"})
     public String index() {
+        return "/index";
+    }
+    @GetMapping(value = {"/admin","/admin/"})
+    public String admin() {
+        return "/index";
+    }
+    @GetMapping(value = {"/user","/user/"})
+    public String user() {
+        return "/index";
+    }
+    @GetMapping(value = {"/other","/other/"})
+    public String other() {
+        return "/index";
+    }
+    @GetMapping(value = {"/javadoc","/javadoc/"})
+    public String javadoc() {
         return "/index";
     }
 }

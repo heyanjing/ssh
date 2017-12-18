@@ -1,8 +1,9 @@
 <sitemesh>
     <!--都没匹配的时候使用的单个装饰器-->
     <mapping decorator="/WEB-INF/layout/decorator/default.jsp"/>
-    <!--匹配相应的url的时候使用单个装饰器-->
+    <!--匹配相应的url的时候使用单个装饰器
     <mapping path="/*" decorator="/WEB-INF/layout/decorator/default.jsp"/>
+    -->
     <mapping path="/admin/*" decorator="/WEB-INF/layout/decorator/admin/default.jsp"/>
     <mapping path="/user/*" decorator="/WEB-INF/layout/decorator/user/default.jsp"/>
     <!--匹配相应的url的时候使用多个装饰器-->
