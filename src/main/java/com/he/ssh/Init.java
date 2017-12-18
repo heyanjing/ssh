@@ -7,24 +7,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.servlet.ServletContext;
+import java.text.DateFormat;
+import java.util.Date;
 
 /**
  * Created by heyanjing on 2017/12/18 10:45.
  * <p>
- * 注入的context和获取的servletContext是同一个对象
+ * 注入的context、this.servletContext=servletContext;和获取的webApplicationContext.getServletContext()是同一个对象
  * ContextLoader.getCurrentWebApplicationContext().getServletContext() 该方法需要spring容器初始化完成才能使用
  */
 @Component
-public class Init implements ApplicationContextAware {
+public class Init implements ApplicationContextAware,ServletContextAware {
     private static final Logger log = LoggerFactory.getLogger(Init.class);
     @Autowired
     private ServletContext context;
 
+    private ServletContext servletContext;
     private ApplicationContext applicationContext;
 
     @PostConstruct
@@ -41,6 +45,8 @@ public class Init implements ApplicationContextAware {
         context.setAttribute("LIB", lib);
         context.setAttribute("JQUERY", lib + "/jquery");
         context.setAttribute("BOOTSTRAP", lib + "/bootstrap");
+
+        context.setAttribute("V", DateFormat.getDateTimeInstance().format(new Date()));
     }
 
     @PreDestroy
@@ -61,5 +67,11 @@ public class Init implements ApplicationContextAware {
         ServletContext servletContext = webApplicationContext.getServletContext();
         log.warn("{}", servletContext);
         this.applicationContext = applicationContext;
+    }
+
+    @Override
+    public void setServletContext(ServletContext servletContext) {
+        log.warn("{}", servletContext);
+        this.servletContext=servletContext;
     }
 }

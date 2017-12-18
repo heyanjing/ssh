@@ -1,4 +1,4 @@
-package com.he.ssh;
+package com.he.ssh.other;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
