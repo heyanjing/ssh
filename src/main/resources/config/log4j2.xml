@@ -28,7 +28,7 @@
         <logger name="org.apache.http" level="warn"/>
 
 
-        <Root level="debug">
+        <Root level="info">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="FILE_NAME"/>
         </Root>

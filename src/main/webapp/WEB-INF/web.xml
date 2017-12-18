@@ -57,8 +57,9 @@
         <servlet-name>SpringMVC</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
-    <!--// MEINFO:2017/12/16 16:53 首页-->
+    <!--// MEINFO:2017/12/16 16:53 首页
     <welcome-file-list>
         <welcome-file>/</welcome-file>
     </welcome-file-list>
+    -->
 </web-app>
