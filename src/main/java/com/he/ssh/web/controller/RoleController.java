@@ -27,8 +27,10 @@ public class RoleController {
     }
 
     @RequestMapping("/save")
-    public void save(Role role) {
+    @ResponseBody
+    public Role save(Role role) {
         this.roleService.save(role);
+        return role;
     }
 
     @RequestMapping("/getById")

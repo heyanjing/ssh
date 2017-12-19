@@ -27,8 +27,11 @@ public class UserController {
     }
 
     @RequestMapping("/save")
-    public void save(User user) {
+    @ResponseBody
+    public User save(User user) {
+        log.info("{}", user);
         this.userService.save(user);
+        return user;
     }
 
     @RequestMapping("/getById")
@@ -48,6 +51,7 @@ public class UserController {
     public List<User> findAll() {
         return this.userService.findAll();
     }
+
     @RequestMapping("/findAll2")
     @ResponseBody
     public List<User> findAll2() {

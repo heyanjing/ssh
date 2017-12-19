@@ -8,11 +8,39 @@
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
         <context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
     </context:component-scan>
+
     <mvc:resources mapping="/static/**" location="/static/"/>
-    <mvc:annotation-driven/>
+
     <bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="contentType" value="text/html; charset=UTF-8"/>
         <property name="prefix" value="/WEB-INF/view"/>
         <property name="suffix" value=".jsp"/>
     </bean>
+    <!--
+        格式转换服务功能相当于实体类上加@DateTimeFormat注解,
+        这样做的好处在于不用每个类的字段上面都加注解
+    -->
+    <bean id="formatService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+        <property name="formatters">
+            <set>
+                <bean class="com.he.ssh.base.core.formatter.DateFormatter"/>
+                <bean class="com.he.ssh.base.core.formatter.LocalDateFormatter"/>
+                <bean class="com.he.ssh.base.core.formatter.LocalDateTimeFormatter"/>
+            </set>
+        </property>
+    </bean>
+
+    <mvc:annotation-driven conversion-service="formatService">
+        <mvc:message-converters>
+            <!--java8 日期序列化-->
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                <property name="objectMapper" value="#{jsonConverter.mapper}"/>
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>application/json;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
 </beans>

@@ -6,6 +6,8 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.Entity;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * Created by heyanjing on 2017/12/19 9:43.
@@ -19,6 +21,27 @@ public class User extends BaseEntityWithStringId {
     private String nickName;
     private Integer age;
     private LocalDate birthday;
+    private Date birthday2;
+    private LocalDateTime birthday3;
+
+    public LocalDateTime getBirthday3() {
+        return birthday3;
+    }
+
+    public void setBirthday3(LocalDateTime birthday3) {
+        this.birthday3 = birthday3;
+    }
+
+
+
+    public Date getBirthday2() {
+        return birthday2;
+    }
+
+    public void setBirthday2(Date birthday2) {
+        this.birthday2 = birthday2;
+    }
+
     private String roleId;
 
     public String getRoleId() {
