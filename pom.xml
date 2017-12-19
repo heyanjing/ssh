@@ -63,6 +63,7 @@
             <version>1.2</version>
         </dependency>
         <!--log4j 2 + slf4j + log4jdbc-->
+        <!--region Description-->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
@@ -78,7 +79,9 @@
             <artifactId>log4jdbc-log4j2-jdbc4.1</artifactId>
             <version>${log4jdbc.version}</version>
         </dependency>
+        <!--endregion-->
         <!--spring + jackson + aspectjweaver + springdata-->
+        <!--region Description-->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -114,7 +117,9 @@
             <artifactId>spring-data-jpa</artifactId>
             <version>${spring-data-jpa.version}</version>
         </dependency>
+        <!--endregion-->
         <!--hibernate + jpa + c3p0+ ehcache + validator-->
+        <!--region Description-->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
@@ -140,6 +145,7 @@
             <artifactId>hibernate-validator</artifactId>
             <version>${hibernate-validator.version}</version>
         </dependency>
+        <!--endregion-->
 
         <!--mysql-->
         <dependency>
@@ -163,6 +169,11 @@
         </dependency>
 
 
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.43</version>
+        </dependency>
 
     </dependencies>
     <build>

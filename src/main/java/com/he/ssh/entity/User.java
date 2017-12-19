@@ -16,8 +16,18 @@ import java.time.LocalDate;
 public class User extends BaseEntityWithStringId {
 
     private String name;
+    private String nickName;
     private Integer age;
     private LocalDate birthday;
+    private String roleId;
+
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
+    }
 
     public String getName() {
         return name;
@@ -47,9 +57,33 @@ public class User extends BaseEntityWithStringId {
 
     }
 
+    public User(String name, String nickName, Integer age, LocalDate birthday, String roleId) {
+        this.name = name;
+        this.nickName = nickName;
+        this.age = age;
+        this.birthday = birthday;
+        this.roleId = roleId;
+    }
+
     public User(String name, Integer age, LocalDate birthday) {
 
         this.name = name;
+        this.age = age;
+        this.birthday = birthday;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public User(String name, String nickName, Integer age, LocalDate birthday) {
+
+        this.name = name;
+        this.nickName = nickName;
         this.age = age;
         this.birthday = birthday;
     }

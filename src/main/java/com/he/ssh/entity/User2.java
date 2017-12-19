@@ -15,6 +15,24 @@ import java.time.LocalDate;
 @DynamicInsert
 public class User2 extends BaseEntityWithLongId {
     private String name;
+    private String nickName;
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public User2(String name, String nickName, Integer age, LocalDate birthday) {
+
+        this.name = name;
+        this.nickName = nickName;
+        this.age = age;
+        this.birthday = birthday;
+    }
+
     private Integer age;
     private LocalDate birthday;
 

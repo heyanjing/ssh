@@ -36,10 +36,22 @@ public class UserController {
     public User getById(String id) {
         return this.userService.getById(id);
     }
+
+    @RequestMapping("/getById2")
+    @ResponseBody
+    public User getById2(String id) {
+        return this.userService.getById2(id);
+    }
+
     @RequestMapping("/findAll")
     @ResponseBody
     public List<User> findAll() {
         return this.userService.findAll();
+    }
+    @RequestMapping("/findAll2")
+    @ResponseBody
+    public List<User> findAll2() {
+        return this.userService.findAll2();
     }
 
 }
