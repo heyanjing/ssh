@@ -45,7 +45,7 @@
     </filter-mapping>
     <!--// MEINFO:2017/12/16 16:53 SpringMVC-->
     <servlet>
-        <servlet-name>SpringMVC</servlet-name>
+        <servlet-name>springmvc</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
             <param-name>contextConfigLocation</param-name>
@@ -54,7 +54,7 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
-        <servlet-name>SpringMVC</servlet-name>
+        <servlet-name>springmvc</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
     <!--// MEINFO:2017/12/16 16:53 首页

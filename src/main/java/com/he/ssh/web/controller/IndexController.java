@@ -1,4 +1,4 @@
-package com.he.ssh.controller;
+package com.he.ssh.web.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

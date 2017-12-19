@@ -5,6 +5,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import java.time.LocalDateTime;
 
 /**
  * 使用条件：
@@ -21,6 +22,9 @@ public abstract class BaseEntityWithStringId extends BaseEntity<String> {
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     protected String id;
+    protected LocalDateTime createDateTime;
+    protected LocalDateTime updateDateTime;
+
 
     @Override
     public String getId() {
@@ -30,5 +34,21 @@ public abstract class BaseEntityWithStringId extends BaseEntity<String> {
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    public LocalDateTime getCreateDateTime() {
+        return createDateTime;
+    }
+
+    public void setCreateDateTime(LocalDateTime createDateTime) {
+        this.createDateTime = createDateTime;
+    }
+
+    public LocalDateTime getUpdateDateTime() {
+        return updateDateTime;
+    }
+
+    public void setUpdateDateTime(LocalDateTime updateDateTime) {
+        this.updateDateTime = updateDateTime;
     }
 }

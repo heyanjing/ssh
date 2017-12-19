@@ -2,7 +2,6 @@ package com.he.ssh.base.hibernate;
 
 import com.he.ssh.base.core.Guava;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.util.Strings;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
@@ -238,7 +237,7 @@ public class BaseHibernateDao<T> {
         }
         Long count = Long.valueOf(count_query.uniqueResult().toString());
         List<T> data = data_query.setResultTransformer(Transformers.aliasToBean(this.entityClass)).list();
-        return new PageImpl<T>(data, new PageRequest(pageNumber - 1, pageSize), count);
+        return new PageImpl<>(data, PageRequest.of(pageNumber - 1, pageSize), count);
     }
 
     public Page<T> pageBySql(String sql, Map<String, ?> params, Integer pageNumber, Integer pageSize) {// 没有排序参数
@@ -264,7 +263,7 @@ public class BaseHibernateDao<T> {
         }
         Long count = Long.valueOf(count_query.uniqueResult().toString());
         List<T> data = data_query.list();
-        return new PageImpl<T>(data, new PageRequest(pageNumber - 1, pageSize), count);
+        return new PageImpl<>(data, PageRequest.of(pageNumber - 1, pageSize), count);
     }
 
     public Page<T> pageByHql(String sql, Map<String, ?> params, Integer pageNumber, Integer pageSize) {// 没有排序参数
@@ -355,8 +354,8 @@ public class BaseHibernateDao<T> {
         // List<E> data1 = data_query.setResultTransformer(new AliasToBeanResultTransformer(entityClass)).list();
         // List<E> data2 = data_query.setResultTransformer(new AliasToBeanResultTransformer(entityClass)).list();
         //
-        // Page<E> page1 = new PageImpl<E>(data, new PageRequest(pageNumber, pageSize), count);
-        return new PageImpl<E>(data, new PageRequest(pageNumber - 1, pageSize), count);
+        // Page<E> page1 = new PageImpl<E>(data, PageRequest.of(pageNumber, pageSize), count);
+        return new PageImpl<E>(data, PageRequest.of(pageNumber - 1, pageSize), count);
     }
 
     public <E> Page<E> pageEntityClassBySql(String sql, Map<String, ?> params, Class<E> entityClass, Integer pageNumber, Integer pageSize) {
@@ -384,7 +383,7 @@ public class BaseHibernateDao<T> {
         Long count = Long.valueOf(count_query.uniqueResult().toString());
         List data = data_query.list();
         List<E> list = this.copyProp(data, clazz);
-        return new PageImpl<E>(list, new PageRequest(pageNumber - 1, pageSize), count);
+        return new PageImpl<E>(list, PageRequest.of(pageNumber - 1, pageSize), count);
     }
 
     public <E> Page<E> pageEntityClassByHql(String sql, Class<E> clazz, Map<String, ?> params, Integer pageNumber, Integer pageSize) {
@@ -412,7 +411,7 @@ public class BaseHibernateDao<T> {
         }
         Long count = Long.valueOf(count_query.uniqueResult().toString());
         List<Map<String, Object>> data = data_query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
-        return new PageImpl<Map<String, Object>>(data, new PageRequest(pageNumber - 1, pageSize), count);
+        return new PageImpl<Map<String, Object>>(data, PageRequest.of(pageNumber - 1, pageSize), count);
     }
 
     // ----------------------------------------------------------------
@@ -497,7 +496,7 @@ public class BaseHibernateDao<T> {
         return sorter;
     }
 
-   enum SqlType {
+    enum SqlType {
         SQL, HQL, JPQL
     }
 }

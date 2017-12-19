@@ -15,10 +15,12 @@
         <log4j.version>2.9.1</log4j.version>
         <log4jdbc.version>1.16</log4jdbc.version>
         <jackson.version>2.9.3</jackson.version>
+        <aspectjweaver.version>1.8.13</aspectjweaver.version>
         <spring.version>5.0.2.RELEASE</spring.version>
         <spring-data-jpa.version>2.0.2.RELEASE</spring-data-jpa.version>
         <hibernate.version>5.1.5.Final</hibernate.version>
         <hibernate-validator.version>6.0.5.Final</hibernate-validator.version>
+        <mysql.version>5.1.44</mysql.version>
         <sitemesh.version>3.0.1</sitemesh.version>
         <commons.version>3.7</commons.version>
         <!--
@@ -40,6 +42,7 @@
     </dependencyManagement>-->
     <!--// MEINFO:2017/12/16 13:25 依赖-->
     <dependencies>
+        <!--junit-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -47,6 +50,7 @@
             <scope>test</scope>
         </dependency>
 
+        <!--servlet 3.1       jstl 1.2-->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -58,7 +62,7 @@
             <artifactId>jstl</artifactId>
             <version>1.2</version>
         </dependency>
-
+        <!--log4j 2 + slf4j + log4jdbc-->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
@@ -74,11 +78,16 @@
             <artifactId>log4jdbc-log4j2-jdbc4.1</artifactId>
             <version>${log4jdbc.version}</version>
         </dependency>
-
+        <!--spring + jackson + aspectjweaver + springdata-->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${aspectjweaver.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -105,7 +114,7 @@
             <artifactId>spring-data-jpa</artifactId>
             <version>${spring-data-jpa.version}</version>
         </dependency>
-
+        <!--hibernate + jpa + c3p0+ ehcache + validator-->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
@@ -132,17 +141,28 @@
             <version>${hibernate-validator.version}</version>
         </dependency>
 
+        <!--mysql-->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
+        </dependency>
+
+
+        <!--sitemesh-->
         <dependency>
             <groupId>org.sitemesh</groupId>
             <artifactId>sitemesh</artifactId>
             <version>${sitemesh.version}</version>
         </dependency>
-
+        <!--commons家族-->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commons.version}</version>
         </dependency>
+
+
 
     </dependencies>
     <build>

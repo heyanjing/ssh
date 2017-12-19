@@ -4,6 +4,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import java.time.LocalDateTime;
 
 /**
  * 使用条件：
@@ -19,6 +20,8 @@ public abstract class BaseEntityWithLongId extends BaseEntity<Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     protected Long id;
+    protected LocalDateTime createDateTime;
+    protected LocalDateTime updateDateTime;
 
     @Override
     public Long getId() {
@@ -28,5 +31,21 @@ public abstract class BaseEntityWithLongId extends BaseEntity<Long> {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public LocalDateTime getCreateDateTime() {
+        return createDateTime;
+    }
+
+    public void setCreateDateTime(LocalDateTime createDateTime) {
+        this.createDateTime = createDateTime;
+    }
+
+    public LocalDateTime getUpdateDateTime() {
+        return updateDateTime;
+    }
+
+    public void setUpdateDateTime(LocalDateTime updateDateTime) {
+        this.updateDateTime = updateDateTime;
     }
 }
