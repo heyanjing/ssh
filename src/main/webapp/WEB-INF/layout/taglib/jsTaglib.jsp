@@ -4,4 +4,5 @@
 	window.JS = '${JS}';
 	window.IMG = '${IMG}';
 	window.CSS = '${CSS}';
+	window.LIB = '${LIB}';
 </script>

@@ -12,7 +12,7 @@
     <!--// MEINFO:2017/12/16 16:53 spring容器初始化-->
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>classpath*:/spring/spring-base*.xml</param-value>
+        <param-value>classpath*:spring/spring-base*.xml</param-value>
     </context-param>
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
@@ -49,7 +49,7 @@
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
             <param-name>contextConfigLocation</param-name>
-            <param-value>classpath*:/spring/spring-web.xml</param-value>
+            <param-value>classpath*:spring/spring-web*.xml</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>

@@ -45,6 +45,7 @@ public class Init implements ApplicationContextAware, ServletContextAware {
         context.setAttribute("LIB", lib);
         context.setAttribute("JQUERY", lib + "/jquery");
         context.setAttribute("BOOTSTRAP", lib + "/bootstrap");
+        context.setAttribute("WEBUPLOADER", lib + "/webuploader");
 
         context.setAttribute("V", DateFormat.getDateTimeInstance().format(new Date()));
     }
