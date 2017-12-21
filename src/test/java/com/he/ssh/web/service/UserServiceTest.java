@@ -31,9 +31,9 @@ public class UserServiceTest {
 
     @Test
     public void save() throws Exception {
-        String birthday = "1989-09-19";
+        String birthday = "1989-09-20";
         LocalDate date = LocalDate.parse(birthday, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        User user = new User("何彦静2", "昵称2", 28, date, "2a17f1da-0e2b-42b5-99fd-4dfff3953a4f");// insert into User (age, birthday, name, id) values (28, '1989-09-19', '何彦静', 'c22a00d6-d63e-4821-882c-1b4e18af085f')
+        User user = new User("何彦静2", "昵称2", 29, date, "0710fb02-6ec0-4153-8169-e6b0176ac7da");// insert into User (age, birthday, name, id) values (28, '1989-09-19', '何彦静', 'c22a00d6-d63e-4821-882c-1b4e18af085f')
         user.setCreateDateTime(LocalDateTime.now());
         user.setUpdateDateTime(LocalDateTime.now());
         this.userService.save(user);

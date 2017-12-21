@@ -32,7 +32,7 @@ public class RoleServiceTest {
     public void save() throws Exception {
         String birthday = "1989-09-19";
         LocalDate date = LocalDate.parse(birthday, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        Role role = new Role("admin", "code2");
+        Role role = new Role("user2", "code2");
         role.setCreateDateTime(LocalDateTime.now());
         role.setUpdateDateTime(LocalDateTime.now());
         this.roleService.save(role);
