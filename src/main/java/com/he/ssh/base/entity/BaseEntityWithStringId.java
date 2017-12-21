@@ -2,6 +2,7 @@ package com.he.ssh.base.entity;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
@@ -21,6 +22,7 @@ public abstract class BaseEntityWithStringId extends BaseEntity<String> {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(unique = true)
     protected String id;
     protected LocalDateTime createDateTime;
     protected LocalDateTime updateDateTime;
