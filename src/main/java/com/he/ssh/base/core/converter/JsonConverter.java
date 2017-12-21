@@ -2,6 +2,8 @@ package com.he.ssh.base.core.converter;
 
 /**
  * Created by heyanjing on 2017/12/19 17:07.
+ *
+ * springmvc @responsebody 对java8日期的处理
  */
 
 import com.fasterxml.jackson.core.JsonGenerator;

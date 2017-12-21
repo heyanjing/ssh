@@ -14,6 +14,7 @@ import java.util.Locale;
 
 /**
  * Created by heyanjing on 2017/12/19 16:10.
+ * springmvc 参数封装成对象需要的格式化
  */
 public class DateFormatter implements Formatter<Date> {
     private static final Logger log = LoggerFactory.getLogger(DateFormatter.class);

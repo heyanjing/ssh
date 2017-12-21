@@ -1,31 +1,28 @@
 package com.he.ssh.web.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.he.ssh.base.bean.Result;
-import com.he.ssh.base.core.Guava;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import com.he.ssh.base.bean.Results;
+import com.he.ssh.base.core.poi.Excel;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.channels.FileChannel;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -39,13 +36,45 @@ public class FileUploadController {
 
 
     /**
-     * @http /file/upload
+     * @http /file/upload/import
      */
-    @GetMapping("/")
+    @GetMapping("/import")
     public String index() {
         return "/upload/webuploader";
     }
 
+
+    /**
+     * @http /file/upload
+     */
+    @GetMapping(value = {"", "/"})
+    public String upload(Model model) {
+        return "/upload/upload";
+    }
+
+    /**
+     * @http /file/upload/webuploader
+     */
+    @GetMapping(value = {"/webuploader", "/webuploader/"})
+    public String webuploader(Model model) {
+        return "/upload/webuploader";
+    }
+
+    /**
+     * 断点续传
+     *
+     * @http /file/upload/webuploaderchunked
+     */
+    @GetMapping(value = {"/webuploaderchunked", "/webuploaderchunked/"})
+    public String webuploaderchunked(Model model) {
+        return "/upload/webuploader_chunked";
+    }
+
+    /**
+     * excel导入
+     *
+     * @http /file/upload/excel/import
+     */
     @RequestMapping("/excel/import")
     @ResponseBody
     public Result uploadFile(@RequestParam("file") MultipartFile[] files) {
@@ -62,7 +91,9 @@ public class FileUploadController {
                 log.info(file.getSize() + "");//19456
                 log.info("{}", file.isEmpty());//false
                 //endregion
-                Result workbookResult = this.getWorkbookResult(inputStream, name);
+
+                log.info("获取excel的数据");
+                Result workbookResult = Excel.getWorkbookResult(inputStream, name, head);
 
 
             }
@@ -74,127 +105,157 @@ public class FileUploadController {
         return null;
     }
 
-    private Result getWorkbookResult(InputStream inputStream, String name) throws IOException, InvalidFormatException {
-        Result result = Result.success();
-        Workbook wb = null;
-        if (name.endsWith(".xls")) {
-            wb = new HSSFWorkbook(new POIFSFileSystem(inputStream));
-        } else if (name.endsWith(".xlsx")) {
-            wb = new XSSFWorkbook(OPCPackage.open(inputStream));
-        } else {
-            return Result.failure();
-        }
-        Sheet sheet = wb.getSheetAt(0);
-        int realRowNumber = this.getRealRowNumber(sheet);
-        Row row = sheet.getRow(0);
-        List<Object> headCellValues = this.getCellValues(row);
+    private int count = 0;
 
-        //region Description
-        log.info("{}", Arrays.asList(head));
-        log.info("{}", headCellValues);
-        log.info("{}", Arrays.equals(head, headCellValues.toArray()));
+
+    /**
+     * 单文件上传
+     *
+     * @http /file/upload/singleFileUpload
+     * 当使用 Servlet 3.0 multipart 解析时,你也可以使用 javax.servlet.http.Part 作为方法参数
+     * @RequestParam("file") Part file
+     * @RequestPart("file") MultipartFile file // MEINFO:2017/11/29 16:46 待验证
+     */
+    @PostMapping("/singleFileUpload")
+    @ResponseBody
+    public Result singleFileUpload(@RequestParam("file") MultipartFile file, String chunks, String chunk, String fileMd5) throws IOException {
+        log.warn("*********************************" + count++ + "***********************************************");
+        log.warn(chunks);
+        log.warn(chunk);
+        log.warn(fileMd5);
+        chunk = StringUtils.isEmpty(chunk) ? "" : chunk;
+
+        File tempfile = new File("D:/tempfile" + "/" + fileMd5);
+        if (!tempfile.exists()) {
+            tempfile.mkdir();
+        }
+
+
+        log.info(file.getContentType());//image/jpeg
+        log.info(file.getName());//file
+        log.info(file.getOriginalFilename());//58dc988e66f35.jpg
+        log.info(file.getSize() + "");//402026
+        log.info("{}", file.isEmpty());//false
+
+        file.transferTo(new File(tempfile, fileMd5 + chunk));//保存文件
+//        file.transferTo(new File("D:/Temp"+File.separator+file.getOriginalFilename()));//保存文件
+
+        return Results.success();
+    }
+
+    /**
+     * 多文件上传
+     *
+     * @http /file/upload/multipleFileUpload
+     */
+    // Handling multiple files upload request
+    @PostMapping("/multipleFileUpload")
+    @ResponseBody
+    public Result multipleFileUpload(@RequestParam("files") MultipartFile[] files) throws IOException {
+
+        // Save file on system
+        for (MultipartFile file : files) {
+            log.info(file.getContentType());//image/jpeg
+            log.info(file.getName());//file
+            log.info(file.getOriginalFilename());//58dc988e66f35.jpg
+            log.info(file.getSize() + "");//402026
+            log.info("{}", file.isEmpty());//false
+            file.transferTo(new File("D:/Temp" + File.separator + file.getOriginalFilename()));//保存文件
+        }
+        return Results.success();
+    }
+
+    /**
+     * 检查分块
+     *
+     * @http /file/upload/checkChunk
+     */
+    @PostMapping("/checkChunk")
+    @ResponseBody
+    public Result checkChunk(String fileMd5, String chunk, Long chunkSize) {
+        Result result = Results.failure(1);
+        log.error(fileMd5);
+        log.warn("检查分块--" + chunk);
+        log.error(chunkSize + "");
+
+        File tempfile = new File("D:/tempfile" + "/" + fileMd5);
+        if (!tempfile.exists()) {
+            tempfile.mkdir();
+        }
+        File[] files = tempfile.listFiles();
+        for (int i = 0; i < files.length; i++) {
+            if ((files[i].getName().equals(fileMd5 + chunk) || files[i].getName().equals(fileMd5)) && files[i].length() == chunkSize) {
+                result = Results.success();
+            }
+        }
+        return result;
+
+    }
+
+    /**
+     * 合并分块
+     *
+     * @http /file/upload/mergeChunk
+     */
+    @PostMapping("/mergeChunk")
+    @ResponseBody
+    public Result mergeChunk(String fileMd5, String fileName) {
+        Result result = Results.failure(1);
+        FileChannel destFileChannel = null;
+        FileChannel sourceFileChannel = null;
+        try {
+            File sourceDir = new File("D:/tempfile" + "/" + fileMd5);
+            File destDir = new File("D:/file");
+            List<String> fileNameList = Arrays.asList(sourceDir.list());
+            fileNameList.sort(Comparator.naturalOrder());
+
+
+            destFileChannel = new FileOutputStream(new File(destDir, fileName), true).getChannel();
+
+            for (int i = 0; i < fileNameList.size(); i++) {
+                String sourcePath = fileMd5;
+                if (fileNameList.size() != 1) {
+                    sourcePath += i;
+                }
+                sourceFileChannel = new FileInputStream(new File(sourceDir, sourcePath)).getChannel();
+                destFileChannel.transferFrom(sourceFileChannel, destFileChannel.size(), sourceFileChannel.size());
+            }
+            result = Results.success();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (sourceFileChannel != null) {
+                    sourceFileChannel.close();
+                }
+                if (destFileChannel != null) {
+                    destFileChannel.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        //region Description效率低10倍
+        //        List<FileInputStream> list= Lists.newArrayList();
+//        for (int i = 0; i < fileNameList.size(); i++) {
+//            list.add(new FileInputStream(new File(sourceDir,fileMd5+i)));
+//        }
+//        Enumeration<FileInputStream> en = Collections.enumeration(list);
+//        SequenceInputStream sis = new SequenceInputStream(en);
+//        FileOutputStream fos = new FileOutputStream(new File(desDir,fileName));
+//        byte[] by = new byte[1024];
+//        int len = 0;
+//        while((len = sis.read(by))!=-1){
+//            fos.write(by, 0, len);
+//        }
+//        fos.close();
+//        sis.close();
         //endregion
-        if (Arrays.equals(head, headCellValues.toArray())) {
-            List<List<Object>> cellValuesList = this.getCellValuesList(sheet, realRowNumber);
-            //["CL2017000001","通用设备","轿车","轿车","2017-11-30","2017年9月20号、11月31号","2017-11-30 00:00:00","原值","1","0.00","198,000.00","新购","在用","自用","","","","","0.000000","重庆市城市建设综合开发管理办公室","2017-12-14 10:18:00","SVW71810BU","","不提折旧","平均年限法","0.000","198,000.00","0","","领导实物用车","","","","LSVD76A43HN117083","上海","121555"]
-            log.info(JSON.toJSONString(cellValuesList));
-            result.setData(cellValuesList);
-            return result;
-        } else {
-            return Result.failure("请下载标准模板");
-        }
-    }
 
-    private List<List<Object>> getCellValuesList(Sheet sheet, int realRowNumber) {
-        List<List<Object>> cellValuesList = Guava.newArrayList();
-        for (int i = 1; i <= realRowNumber; i++) {
-            Row rowi = sheet.getRow(i);
-            List<Object> cellValues = this.getCellValues(rowi);
-            log.error("****************");
-            cellValuesList.add(cellValues);
-        }
-        return cellValuesList;
-    }
 
-    private int getRealRowNumber(Sheet sheet) {
-        int lastRowNum = sheet.getLastRowNum();
-        for (int i = 0; i < lastRowNum; i++) {
-            Row row1 = sheet.getRow(i);
-            if (row1 == null) {
-                sheet.shiftRows(i + 1, lastRowNum, -1);
-                lastRowNum = sheet.getLastRowNum();
-                i = i - 1;
-            } else {
-                Boolean isRemove = true;//默认移除该行
-                for (Cell cell : row1) {
-                    if (cell.getCellTypeEnum() != CellType.BLANK) {
-                        isRemove = false;
-                        break;
-                    }
-                }
-                if (isRemove) {
-                    if (i == sheet.getLastRowNum()) {
-                        sheet.removeRow(row1);
-                    } else {
-                        sheet.shiftRows(i + 1, lastRowNum, -1);
-                        lastRowNum = sheet.getLastRowNum();
-                        i = i - 1;
-                    }
-                }
-            }
-        }
-        return sheet.getLastRowNum();
-    }
+        return result;
 
-    private List<Object> getCellValues(Row row) {
-        List<Object> list = Guava.newArrayList();
-        for (Cell cell : row) {
-            Object cellValue = this.getCellValue(cell);
-            list.add(cellValue);
-        }
-        return list;
-    }
-
-    private Object getCellValue(Cell cell) {
-        Object cellValue = null;
-        if (cell != null) {
-            CellType cellType = cell.getCellTypeEnum();
-            log.warn("{}",cellType);
-            //region Description
-            switch (cellType) {
-                case STRING:
-                    cellValue = cell.getStringCellValue().trim();
-                    break;
-                case NUMERIC:
-                    if (DateUtil.isCellDateFormatted(cell)) {
-                        cellValue = cell.getDateCellValue();
-                    } else {
-                        cellValue = cell.getNumericCellValue();
-                    }
-                    break;
-                case BOOLEAN:
-                    cellValue = cell.getBooleanCellValue();
-                    break;
-                case FORMULA:
-                    cell.getCellFormula();
-                    break;
-                case BLANK:
-                    cellValue = "";
-                    break;
-                case ERROR:
-                    cellValue = "";
-                    break;
-                case _NONE:
-                    cellValue = "";
-                    break;
-                default:
-                    cellValue = "";
-                    break;
-            }
-            //endregion
-        } else {
-            cellValue = "";
-        }
-        return cellValue;
     }
 }
