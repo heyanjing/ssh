@@ -1,4 +1,4 @@
-package com.he.ssh.web;
+package com.he.ssh;
 
 import com.he.ssh.base.core.poi.Excel;
 import com.he.ssh.base.core.poi.Title;
