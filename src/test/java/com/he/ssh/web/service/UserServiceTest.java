@@ -55,10 +55,13 @@ public class UserServiceTest {
     @Test
     public void findAll() throws Exception {
         //select user0_.id as id1_1_, user0_.createDateTime as createDa2_1_, user0_.updateDateTime as  updateDa3_1_, user0_.age as age4_1_, user0_.birthday as birthday5_1_, user0_.name as name6_1_, user0_.nickName as nickName7_1_ from User user0_
+        long start=System.currentTimeMillis(); //获取开始时间
         List<User> userList = this.userService.findAll();
-        log.warn("{}", userList);
+        long end=System.currentTimeMillis(); //获取结束时间
+        System.out.println("程序运行时间： "+(end-start)+"ms");
+//        log.info("{}", userList);
         List<User> userList2 = this.userService.findAll2();
-        log.warn("{}", userList2);
+//        log.info("{}", userList2);
     }
 
 }

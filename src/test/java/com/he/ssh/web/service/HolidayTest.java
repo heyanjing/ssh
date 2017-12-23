@@ -126,7 +126,7 @@ public class HolidayTest {
         restStill2018.add(new HolidayBean(HolidayEnum.NINE, "0430"));
         restStill2018.add(new HolidayBean(HolidayEnum.TWELVE, "1004-1005"));
 
-        Result result2 = HolidayUtil.genernateAllHolidays(year, legalHoliday2018, workStill2018, restStill2018);
+        Result result2 = HolidayUtil.genernateAllHolidays(year2, legalHoliday2018, workStill2018, restStill2018);
         insert(result2);
     }
 

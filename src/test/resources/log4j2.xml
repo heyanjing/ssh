@@ -34,6 +34,11 @@
         <logger name="jdbc.audit" level="OFF"/>
         <logger name="jdbc.resultset" level="OFF"/>
         <logger name="jdbc.connection" level="OFF"/>
+        <!--输出log4jdbc的debug信息
+        <logger name="log4jdbc.debug" level="debug" additivity="false">
+            <appender-ref ref="Console"/>
+        </logger>
+        -->
 
         <Root level="info">
             <AppenderRef ref="Console"/>

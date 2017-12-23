@@ -35,7 +35,13 @@
         <logger name="jdbc.resultset" level="OFF"/>
         <logger name="jdbc.connection" level="OFF"/>
 
-        <Root level="info">
+        <!--输出log4jdbc的debug信息
+        <logger name="log4jdbc.debug" level="debug" additivity="false">
+            <appender-ref ref="Console"/>
+        </logger>
+        -->
+
+        <Root level="debug">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="FILE_NAME"/>
         </Root>
