@@ -2,19 +2,19 @@ package com.he.ssh.web.service;
 
 import com.he.ssh.base.bean.HolidayBean;
 import com.he.ssh.base.bean.Result;
+import com.he.ssh.base.core.CalenderConverter;
 import com.he.ssh.base.core.Guava;
 import com.he.ssh.base.core.HolidayUtil;
 import com.he.ssh.base.core.enumm.HolidayEnum;
 import com.he.ssh.entity.Holiday;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by heyanjing on 2017/12/22 8:58.
@@ -30,14 +30,147 @@ import java.util.List;
  * 端午节，放假1天（农历端午当日）；
  * 中秋节，放假1天（农历中秋当日）；
  * 国庆节，放假3天（10月1日、2日、3日）。
+ * <p>
+ * ▪ 春节 ( 农历正月初一)	▪ 元宵节 ( 农历正月十五)	▪ 头牙 ( 农历二月初二)
+ * ▪ 寒食节 ( 清明节前一天)	▪ 清明节 ( 节气清明)	▪ 端午节 ( 农历五月初五)
+ * ▪ 七夕 ( 农历七月初七)	▪ 中元节 ( 农历七月十五)	▪ 中秋节 ( 农历八月十五)
+ * ▪ 重阳节 ( 农历九月九)	▪ 冬至 ( 节气冬至)	▪ 腊八节 ( 农历腊月初八)
+ * ▪ 尾牙 ( 农历腊月十六)	▪ 祭灶 ( 农历腊月廿四)	▪ 除夕 ( 农历十二月卅日)
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath*:spring/spring-base.xml"})
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration(locations = {"classpath*:spring/spring-base.xml"})
 public class HolidayTest {
     private static final Logger log = LoggerFactory.getLogger(HolidayTest.class);
 
     @Autowired
     HolidayService holidayService;
+
+    @Test
+    public void holiday3() {
+        //region Description 2017年的法定节假日
+//        一、元旦：1月1日放假，1月2日（星期一）补休。0101/ /0102
+//
+//        二、春节：1月27日至2月2日放假调休，共7天。1月22日（星期日）、2月4日（星期六）上班。0127-0202 / 0122 0204
+//
+//        三、清明节：4月2日至4日放假调休，共3天。4月1日（星期六）上班。0402-0404 / 0401
+//
+//        四、劳动节：5月1日放假，与周末连休。0429-0501
+//
+//        五、端午节：5月28日至30日放假调休，共3天。5月27日（星期六）上班。 0528-0530 / 0527
+//
+//        六、中秋节、国庆节：10月1日至8日放假调休，共8天。9月30日（星期六）上班。 1001-1008 / 0930
+        //endregion
+        String year = "2017";
+        List<String> holidays1 = Arrays.asList(CalenderConverter.HOLIDAYS).parallelStream().map(md -> CalenderConverter.ying2yang(year + md)).collect(Collectors.toList());
+        List<String> holidays2 = Arrays.asList(HolidayUtil.HOLIDAYS).parallelStream().map(md -> year + md).collect(Collectors.toList());
+        holidays1.addAll(holidays2);
+        //得到所有法定假日
+        List<String> holidays = holidays1.stream().sorted().collect(Collectors.toList());
+
+        holidays.forEach(str -> log.info(str));
+//        20170101
+//        20170128
+//        20170129
+//        20170130
+//        20170501
+//        20170530
+//        20171001
+//        20171002
+//        20171003
+//        20171004
+// METIP: 2017/12/24 2:24 重要提醒 只需要封装对应的 周末任然工作 和 工作日任然休息
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+        List<HolidayBean> legalHoliday2017 = Guava.newArrayList();//法定节日
+        legalHoliday2017.add(new HolidayBean(HolidayEnum.SIX, "0101"));
+        legalHoliday2017.add(new HolidayBean(HolidayEnum.SEVEN, "0128-0130"));
+        legalHoliday2017.add(new HolidayBean(HolidayEnum.EIGHT, "0404"));
+        legalHoliday2017.add(new HolidayBean(HolidayEnum.NINE, "0501"));
+        legalHoliday2017.add(new HolidayBean(HolidayEnum.TEN, "0530"));
+        legalHoliday2017.add(new HolidayBean(HolidayEnum.TWELVE, "1001-1003"));
+        legalHoliday2017.add(new HolidayBean(HolidayEnum.ELEVEN, "1004"));
+
+        List<HolidayBean> workStill2017 = Guava.newArrayList();//周末任然工作
+        workStill2017.add(new HolidayBean(HolidayEnum.SEVEN, "0122"));
+        workStill2017.add(new HolidayBean(HolidayEnum.SEVEN, "0204"));
+        workStill2017.add(new HolidayBean(HolidayEnum.EIGHT, "0401"));
+        workStill2017.add(new HolidayBean(HolidayEnum.TEN, "0527"));
+        workStill2017.add(new HolidayBean(HolidayEnum.TWELVE, "0930"));
+
+        List<HolidayBean> restStill2017 = Guava.newArrayList();//工作日任然休息
+        restStill2017.add(new HolidayBean(HolidayEnum.SIX, "0102"));
+        restStill2017.add(new HolidayBean(HolidayEnum.SEVEN, "0127"));
+        restStill2017.add(new HolidayBean(HolidayEnum.SEVEN, "0131"));
+        restStill2017.add(new HolidayBean(HolidayEnum.SEVEN, "0201"));
+        restStill2017.add(new HolidayBean(HolidayEnum.SEVEN, "0202"));
+        workStill2017.add(new HolidayBean(HolidayEnum.EIGHT, "0403"));
+        workStill2017.add(new HolidayBean(HolidayEnum.TEN, "0529"));
+        workStill2017.add(new HolidayBean(HolidayEnum.TWELVE, "1005"));
+        workStill2017.add(new HolidayBean(HolidayEnum.TWELVE, "1006"));
+
+        Result result = HolidayUtil.genernateAllHolidays(year, legalHoliday2017, workStill2017, restStill2017);
+        insert(result);
+
+
+        //region Description 2018年的法定节假日
+
+//        一、元旦：1月1日放假，与周末连休。0101
+//
+//        二、春节：2月15日至21日放假调休，共7天。2月11日（星期日）、2月24日（星期六）上班。0215-0221 0211 0224
+//
+//        三、清明节：4月5日至7日放假调休，共3天。4月8日（星期日）上班。0405-0407 0408
+//
+//        四、劳动节：4月29日至5月1日放假调休，共3天。4月28日（星期六）上班。 0429-0501 0428
+//
+//        五、端午节：6月18日放假，与周末连休。 0618
+//
+//        六、中秋节：9月24日放假，与周末连休。 0924
+//
+//        七、国庆节：10月1日至7日放假调休，共7天。9月29日（星期六）、9月30日（星期日）上班。 1001-1007 0929-0930
+        //endregion
+        String year2 = "2018";
+        List<HolidayBean> legalHoliday2018 = Guava.newArrayList();//法定节日
+        legalHoliday2018.add(new HolidayBean(HolidayEnum.SIX, "0101"));
+        legalHoliday2018.add(new HolidayBean(HolidayEnum.SEVEN, "0216-0218"));
+        legalHoliday2018.add(new HolidayBean(HolidayEnum.EIGHT, "0405"));
+        legalHoliday2018.add(new HolidayBean(HolidayEnum.NINE, "0501"));
+        legalHoliday2018.add(new HolidayBean(HolidayEnum.TEN, "0618"));
+        legalHoliday2018.add(new HolidayBean(HolidayEnum.ELEVEN, "0924"));
+        legalHoliday2018.add(new HolidayBean(HolidayEnum.TWELVE, "1001-1003"));
+
+        List<HolidayBean> workStill2018 = Guava.newArrayList();//周末任然工作
+        workStill2018.add(new HolidayBean(HolidayEnum.SEVEN, "0211"));
+        workStill2018.add(new HolidayBean(HolidayEnum.SEVEN, "0224"));
+        workStill2018.add(new HolidayBean(HolidayEnum.EIGHT, "0408"));
+        workStill2018.add(new HolidayBean(HolidayEnum.NINE, "0428"));
+        workStill2018.add(new HolidayBean(HolidayEnum.TWELVE, "0929-0930"));
+
+        List<HolidayBean> restStill2018 = Guava.newArrayList();//工作日任然休息
+        restStill2018.add(new HolidayBean(HolidayEnum.SEVEN, "0215"));
+        restStill2018.add(new HolidayBean(HolidayEnum.SEVEN, "0219-0221"));
+        restStill2018.add(new HolidayBean(HolidayEnum.EIGHT, "0406"));
+        restStill2018.add(new HolidayBean(HolidayEnum.NINE, "0430"));
+        restStill2018.add(new HolidayBean(HolidayEnum.TWELVE, "1004-1005"));
+
+        Result result2 = HolidayUtil.genernateAllHolidays(year2, legalHoliday2018, workStill2018, restStill2018);
+        insert(result2);*/
+    }
 
     @Test
     public void holiday2() {

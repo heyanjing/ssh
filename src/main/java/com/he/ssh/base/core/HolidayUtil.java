@@ -16,10 +16,21 @@ import java.util.Map;
 
 /**
  * Created by heyanjing on 2017/12/22 17:06.
+ * 新年，放假1天（1月1日）；
+ * 春节，放假3天（农历正月初一、初二、初三）；
+ * 清明节，放假1天（阳历清明当日）；
+ * 劳动节，放假1天（5月1日）；
+ * 端午节，放假1天（农历端午当日）；
+ * 中秋节，放假1天（农历中秋当日）；
+ * 国庆节，放假3天（10月1日、2日、3日）。
  */
 public class HolidayUtil {
     private static final Logger log = LoggerFactory.getLogger(HolidayUtil.class);
     public static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+    /**
+     * 阳历对应的法定假日
+     */
+    public final static String[] HOLIDAYS = {"0101", "0501", "1001", "1002", "1003"};
 
     /**
      * @param year         年份
