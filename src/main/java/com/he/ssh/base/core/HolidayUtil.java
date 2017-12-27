@@ -1,7 +1,6 @@
 package com.he.ssh.base.core;
 
 import com.he.ssh.base.bean.HolidayBean;
-import com.he.ssh.base.bean.Result;
 import com.he.ssh.base.core.enumm.HolidayEnum;
 import com.he.ssh.entity.Holiday;
 import org.slf4j.Logger;
@@ -11,8 +10,10 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by heyanjing on 2017/12/22 17:06.
@@ -30,178 +31,12 @@ public class HolidayUtil {
     /**
      * 阳历对应的法定假日
      */
-    public final static String[] HOLIDAYS = {"0101", "0501", "1001", "1002", "1003"};
-
+    public final static String[] HOLIDAYSYANG = {"0101", "0501", "1001", "1002", "1003"};
     /**
-     * @param year         年份
-     * @param legalHoliday 节假日类型和对应的节假日范围的对象集合
-     * @param workStill    节假日类型和对应的周末任然工作的对象集合
-     * @param restStill    节假日类型和对应的工作日任然休息的对象集合
-     * @return
+     * 农历对应的法定假日
      */
-    public static Result genernateAllHolidays(String year, List<HolidayBean> legalHoliday, List<HolidayBean> workStill, List<HolidayBean> restStill) {
-        Map<String, HolidayEnum> map = Guava.newHashMap();
+    public final static String[] HOLIDAYSYYING = {"0101", "0102", "0103", "0505", "0815"};
 
-        List<String> legalHolidayDateRangeList = Guava.newArrayList();
-        List<HolidayEnum> legalHolidayHolidayEnumList = Guava.newArrayList();
-        legalHoliday.forEach(bean -> {
-            legalHolidayDateRangeList.add(bean.getDayRange());
-            legalHolidayHolidayEnumList.add(bean.getHolidayType());
-        });
-        List<String> workStillDateRangeList = Guava.newArrayList();
-        List<HolidayEnum> workStillHolidayEnumList = Guava.newArrayList();
-        workStill.forEach(bean -> {
-            workStillDateRangeList.add(bean.getDayRange());
-            workStillHolidayEnumList.add(bean.getHolidayType());
-        });
-        List<String> restStillDateRangeList = Guava.newArrayList();
-        List<HolidayEnum> restStillHolidayEnumList = Guava.newArrayList();
-        restStill.forEach(bean -> {
-            restStillDateRangeList.add(bean.getDayRange());
-            restStillHolidayEnumList.add(bean.getHolidayType());
-        });
-
-
-        Result legalHolidayResult = getdays(year, legalHolidayDateRangeList, legalHolidayHolidayEnumList, map);
-        Result workStillResult = getdays(year, workStillDateRangeList, workStillHolidayEnumList, map);
-        Result restStillResult = getdays(year, restStillDateRangeList, restStillHolidayEnumList, map);
-        if (!legalHolidayResult.isSuccess()) {
-            return legalHolidayResult;
-        }
-        if (!workStillResult.isSuccess()) {
-            return workStillResult;
-        }
-        if (!restStillResult.isSuccess()) {
-            return restStillResult;
-        }
-        List<String> legalHolidayStrList = (List<String>) legalHolidayResult.getData();
-        List<String> workStillStrList = (List<String>) workStillResult.getData();
-        List<String> restStillStrList = (List<String>) restStillResult.getData();
-
-        return getAllHolidays(year, map, legalHolidayStrList, workStillStrList, restStillStrList);
-    }
-
-    /**
-     * @param year            年份
-     * @param dateRangeList   日期范围的字符串集合,不包含年份 0101-0121
-     * @param holidayEnumList 期范围的字符串集合 对应的 节假日类型
-     * @param map             存放具体某一天对应的节假日类型
-     * @return 返回日期范围对应的完整的日期
-     */
-    private static Result getdays(String year, List<String> dateRangeList, List<HolidayEnum> holidayEnumList, Map<String, HolidayEnum> map) {
-        Result result = Result.success();
-        List list = Guava.newArrayList();
-        for (int i = 0; i < dateRangeList.size(); i++) {
-            String day = dateRangeList.get(i);
-            HolidayEnum dayType = holidayEnumList.get(i);
-            if (day.contains("-")) {
-                String[] rangeDay = day.split("-");
-                String startDay = year + rangeDay[0];
-                String endDay = year + rangeDay[1];
-                LocalDate start = LocalDate.parse(startDay, dateTimeFormatter);
-                LocalDate end = LocalDate.parse(endDay, dateTimeFormatter);
-                if (start.isBefore(end)) {
-                    LocalDate temp = start.minusDays(1);
-                    int over = 0;
-                    while (true) {
-                        temp = temp.plusDays(1);
-                        String localDateStr = temp.format(dateTimeFormatter);
-                        list.add(localDateStr);
-                        map.put(localDateStr, dayType);
-                        over++;
-                        if (temp.equals(end)) {
-                            break;
-                        }
-                        if (over > 365) {
-                            break;
-                        }
-                    }
-                } else {
-                    log.warn("日期范围开始日期应该小于结束日期");
-                    return Result.failure("日期范围开始日期应该小于结束日期");
-                }
-            } else {
-                String localDateStr = year + day;
-                list.add(localDateStr);
-                map.put(localDateStr, dayType);
-            }
-        }
-        result.setData(list);
-        return result;
-    }
-
-    /**
-     * @param year                年份的字符串
-     * @param map                 存放存放日期与节假日枚举对应关系
-     * @param legalHolidayStrList 所有法定假日日期
-     * @param workStillStrList    所有周末任然上班日期
-     * @param restStillStrList    所有工作日任然休息的日期
-     * @return
-     */
-    public static Result getAllHolidays(String year, Map<String, HolidayEnum> map, List<String> legalHolidayStrList, List<String> workStillStrList, List<String> restStillStrList) {
-        Result result = Result.success();
-        String startDate = year + "0101";
-        String endDate = year + "1231";
-        LocalDate start = LocalDate.parse(startDate, dateTimeFormatter);
-        LocalDate end = LocalDate.parse(endDate, dateTimeFormatter);
-        if (start.isBefore(end)) {
-            LocalDateTime now = LocalDateTime.now();
-            List<LocalDate> allDays = getAllDays(start, end);
-            int totalDays = allDays.size();
-            List<Holiday> holidays = Guava.newArrayList();
-            allDays.forEach(nowDate -> {
-                DayOfWeek dayOfWeek = nowDate.getDayOfWeek();
-                String nowStr = nowDate.format(dateTimeFormatter);
-                Holiday holiday = new Holiday(nowStr, nowDate, totalDays);
-                holiday.setCreateDateTime(now);
-                holiday.setUpdateDateTime(now);
-
-                if (legalHolidayStrList.contains(nowStr)) {
-                    log.error("{}是法定节假日", nowDate.format(dateTimeFormatter));
-                    holiday.setType(HolidayEnum.ONE.getValue());
-                    holiday.setTypeStr(HolidayEnum.ONE.getText());
-                    HolidayEnum holidayEnum = map.get(nowStr);
-                    holiday.setHolidayType(holidayEnum.getValue());
-                    holiday.setHolidayTypeStr(holidayEnum.getText());
-                } else {
-                    if (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY) {
-                        if (workStillStrList.contains(nowStr)) {
-                            log.error("{}是调休工作日", nowDate.format(dateTimeFormatter));
-                            holiday.setType(HolidayEnum.FOUR.getValue());
-                            holiday.setTypeStr(HolidayEnum.FOUR.getText());
-                            HolidayEnum holidayEnum = map.get(nowStr);
-                            holiday.setHolidayType(holidayEnum.getValue());
-                            holiday.setHolidayTypeStr(holidayEnum.getText());
-                        } else {
-                            log.error("{}是休息日", nowDate.format(dateTimeFormatter));
-                            holiday.setType(HolidayEnum.TWO.getValue());
-                            holiday.setTypeStr(HolidayEnum.TWO.getText());
-                        }
-                    } else {
-                        if (restStillStrList.contains(nowStr)) {
-                            log.error("{}是调休休息日", nowDate.format(dateTimeFormatter));
-                            holiday.setType(HolidayEnum.FIVE.getValue());
-                            holiday.setTypeStr(HolidayEnum.FIVE.getText());
-                            HolidayEnum holidayEnum = map.get(nowStr);
-                            holiday.setHolidayType(holidayEnum.getValue());
-                            holiday.setHolidayTypeStr(holidayEnum.getText());
-                        } else {
-                            log.error("{}是工作日", nowDate.format(dateTimeFormatter));
-                            holiday.setType(HolidayEnum.THREE.getValue());
-                            holiday.setTypeStr(HolidayEnum.THREE.getText());
-                        }
-                    }
-                }
-                holidays.add(holiday);
-            });
-            result.setData(holidays);
-        } else {
-            log.warn("开始日期应该小于结束日期");
-            result = Result.failure();
-            result.setMsg("开始日期应该小于结束日期");
-        }
-        return result;
-    }
 
     /**
      * @param start 开始日期
@@ -234,5 +69,222 @@ public class HolidayUtil {
             }
         }
         return localDateList;
+    }
+
+    /**
+     * @param year                 年份
+     * @param legalHolidayPlanMap  节假日日期字符串对应的枚举
+     * @param legalHolidayMap      法定节假日的map
+     * @param holidays             所有的法定节假日日期字符串
+     * @param legalHolidayPlanList 所有的节假日日期字符串
+     * @param workStillList        所有的节假日时间安排周末上班对应的日期字符串
+     * @return 返回该年度每一天的实体
+     */
+    public static List<Holiday> getAllHoliday(String year, Map<String, HolidayEnum> legalHolidayPlanMap, Map<String, HolidayEnum> legalHolidayMap, List<String> holidays, List<String> legalHolidayPlanList, List<String> workStillList) {
+        List<Holiday> holidayList = Guava.newArrayList();
+        String startDate = year + "0101";
+        String endDate = year + "1231";
+        LocalDate start = LocalDate.parse(startDate, dateTimeFormatter);
+        LocalDate end = LocalDate.parse(endDate, dateTimeFormatter);
+        if (start.isBefore(end)) {
+            LocalDateTime now = LocalDateTime.now();
+            List<LocalDate> allDays = HolidayUtil.getAllDays(start, end);
+            int totalDays = allDays.size();
+            List<String> finalHolidays = holidays;
+            legalHolidayPlanList.forEach(str -> {
+                if (str.startsWith((Integer.parseInt(year) - 1) + "")) {
+                    allDays.add(LocalDate.parse(str, dateTimeFormatter));
+                }
+            });
+            allDays.forEach(nowDate -> {
+                DayOfWeek dayOfWeek = nowDate.getDayOfWeek();
+                String nowStr = nowDate.format(dateTimeFormatter);
+                Holiday holiday = new Holiday(nowStr, nowDate, totalDays);
+                holiday.setCreateDateTime(now);
+                holiday.setUpdateDateTime(now);
+
+                if (legalHolidayPlanList.contains(nowStr)) {
+                    log.error("{}是法定节假日期间", nowDate.format(dateTimeFormatter));
+                    HolidayEnum type = null;
+                    if (finalHolidays.contains(nowStr)) {
+                        type = legalHolidayMap.get(nowStr);
+                    } else {
+                        type = HolidayEnum.jjr;
+                    }
+                    holiday.setType(type.getValue());
+                    holiday.setTypeStr(type.getText());
+
+                    HolidayEnum holidayEnum = legalHolidayPlanMap.get(nowStr);
+                    holiday.setHolidayType(holidayEnum.getValue());
+                    holiday.setHolidayTypeStr(holidayEnum.getText());
+                } else {
+                    if (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY) {
+                        if (workStillList.contains(nowStr)) {
+                            log.error("{}是调休工作日", nowDate.format(dateTimeFormatter));
+                            holiday.setType(HolidayEnum.txgzr.getValue());
+                            holiday.setTypeStr(HolidayEnum.txgzr.getText());
+                            HolidayEnum holidayEnum = legalHolidayPlanMap.get(nowStr);
+                            holiday.setHolidayType(holidayEnum.getValue());
+                            holiday.setHolidayTypeStr(holidayEnum.getText());
+                        } else {
+                            log.error("{}是休息日", nowDate.format(dateTimeFormatter));
+                            holiday.setType(HolidayEnum.xxr.getValue());
+                            holiday.setTypeStr(HolidayEnum.xxr.getText());
+                        }
+                    } else {
+                        log.error("{}是工作日", nowDate.format(dateTimeFormatter));
+                        holiday.setType(HolidayEnum.gzr.getValue());
+                        holiday.setTypeStr(HolidayEnum.gzr.getText());
+                    }
+                }
+                holidayList.add(holiday);
+            });
+        } else {
+            log.warn("开始日期应该小于结束日期");
+        }
+        return holidayList;
+    }
+
+    /**
+     * @param year                年份
+     * @param workStill           所有的节假日时间安排周末上班bean
+     * @param legalHolidayPlanMap 节假日日期字符串对应的枚举
+     * @return 所有的节假日时间安排周末上班对应的日期字符串
+     */
+    public static List<String> getWorkStill(String year, List<HolidayBean> workStill, Map<String, HolidayEnum> legalHolidayPlanMap) {
+        List<String> workStillList2017 = Guava.newArrayList();
+        for (int i = 0; i < workStill.size(); i++) {
+            HolidayBean holidayBean = workStill.get(i);
+            HolidayEnum holidayType = holidayBean.getHolidayType();
+            String dayRange = holidayBean.getDayRange();
+            String localDateStr = year + dayRange;
+            workStillList2017.add(localDateStr);
+            legalHolidayPlanMap.put(localDateStr, holidayType);
+        }
+        return workStillList2017;
+    }
+
+    /**
+     * @param year                年份
+     * @param legalHolidayPlan    所有的节假日时间安排bean
+     * @param legalHolidayPlanMap 节假日日期字符串对应的枚举
+     * @return 所有的节假日时间安排对应的日期字符串
+     */
+    public static List<String> getAllPlanHolidays(String year, List<HolidayBean> legalHolidayPlan, Map<String, HolidayEnum> legalHolidayPlanMap) {
+        List<String> legalHolidayPlanList2017 = Guava.newArrayList();//计划放假的所有日期字符串
+        for (int i = 0; i < legalHolidayPlan.size(); i++) {
+            HolidayBean holidayBean = legalHolidayPlan.get(i);
+            HolidayEnum holidayType = holidayBean.getHolidayType();
+            String dayRange = holidayBean.getDayRange();
+            if (dayRange.contains("-")) {
+                String[] rangeDay = dayRange.split("-");
+                String startStr = rangeDay[0];
+                String startDay = null;
+                if (startStr.startsWith("12")) {
+                    startDay = (Integer.parseInt(year) - 1) + rangeDay[0];
+                } else {
+                    startDay = year + rangeDay[0];
+                }
+                String endDay = year + rangeDay[1];
+                LocalDate start = LocalDate.parse(startDay, dateTimeFormatter);
+                LocalDate end = LocalDate.parse(endDay, dateTimeFormatter);
+                if (start.isBefore(end)) {
+                    LocalDate temp = start.minusDays(1);
+                    int over = 0;
+                    while (true) {
+                        temp = temp.plusDays(1);
+                        String localDateStr = temp.format(dateTimeFormatter);
+                        legalHolidayPlanList2017.add(localDateStr);
+                        legalHolidayPlanMap.put(localDateStr, holidayType);
+                        over++;
+                        if (temp.equals(end)) {
+                            break;
+                        }
+                        if (over > 365) {
+                            break;
+                        }
+                    }
+                } else {
+                    log.warn("日期范围开始日期应该小于结束日期");
+                }
+            } else {
+                String localDateStr = year + dayRange;
+                legalHolidayPlanList2017.add(localDateStr);
+                legalHolidayPlanMap.put(localDateStr, holidayType);
+            }
+        }
+        return legalHolidayPlanList2017;
+    }
+
+    /**
+     * @param qmStr        清明节日期字符串
+     * @param holidaysYing 农历法定假日对应的阳历日期
+     * @param holidaysYang 阳历法定假日对应的日期
+     * @return 所有的法定节假日
+     */
+    public static List<String> getAllHolidays(String qmStr, List<String> holidaysYing, List<String> holidaysYang) {
+        List<String> holidays = Guava.newArrayList();
+        holidays.addAll(holidaysYing);
+        holidays.addAll(holidaysYang);
+        holidays.add(qmStr);
+
+        holidays = holidays.stream().sorted().collect(Collectors.toList());
+        return holidays;
+    }
+
+    /**
+     * @param year            年份
+     * @param legalHolidayMap 法定节假日的map
+     * @return 阳历法定假日对应的日期
+     */
+    public static List<String> getYANG(String year, Map<String, HolidayEnum> legalHolidayMap) {
+        List<String> holidaysYang = Arrays.asList(HolidayUtil.HOLIDAYSYANG).stream().map(md -> year + md).collect(Collectors.toList());
+        for (int i = 0; i < holidaysYang.size(); i++) {
+            String str = holidaysYang.get(i);
+            if (i == 0) {
+                legalHolidayMap.put(str, HolidayEnum.yd);
+            }
+            if (i == 1) {
+                legalHolidayMap.put(str, HolidayEnum.ld);
+            }
+            if (i >= 2) {
+                legalHolidayMap.put(str, HolidayEnum.gq);
+            }
+        }
+        return holidaysYang;
+    }
+
+    /**
+     * @param year            年份
+     * @param legalHolidayMap 法定节假日的map
+     * @return 农历法定假日对应的阳历日期
+     */
+    public static List<String> getYING(String year, Map<String, HolidayEnum> legalHolidayMap) {
+        List<String> holidaysYing = Arrays.asList(HolidayUtil.HOLIDAYSYYING).stream().map(md -> YingYangConverter.ying2yang(year + md)).collect(Collectors.toList());
+        for (int i = 0; i < holidaysYing.size(); i++) {
+            String str = holidaysYing.get(i);
+            if (i <= 2) {
+                legalHolidayMap.put(str, HolidayEnum.cj);
+            }
+            if (i == 3) {
+                legalHolidayMap.put(str, HolidayEnum.dw);
+            }
+            if (i == 4) {
+                legalHolidayMap.put(str, HolidayEnum.zq);
+            }
+        }
+        return holidaysYing;
+    }
+
+    /**
+     * @param year            年份
+     * @param qmBean          清明对应的bean
+     * @param legalHolidayMap 法定节假日的map
+     * @return 清明节对应的日期字符串  20170404
+     */
+    public static String getQM(String year, HolidayBean qmBean, Map<String, HolidayEnum> legalHolidayMap) {
+        String qmStr = year + qmBean.getDayRange();
+        legalHolidayMap.put(qmStr, qmBean.getHolidayType());
+        return qmStr;
     }
 }

@@ -18,12 +18,9 @@ import java.time.temporal.ChronoUnit;
  * ▪ 重阳节 ( 农历九月九)	▪ 冬至 ( 节气冬至)	▪ 腊八节 ( 农历腊月初八)
  * ▪ 尾牙 ( 农历腊月十六)	▪ 祭灶 ( 农历腊月廿四)	▪ 除夕 ( 农历十二月卅日)
  */
-public class CalenderConverter {
-    private static final Logger log = LoggerFactory.getLogger(CalenderConverter.class);
-    /**
-     * 农历对应的法定假日
-     */
-    public final static String[] HOLIDAYS = {"0101", "0102", "0103", "0505", "0815"};
+public class YingYangConverter {
+    private static final Logger log = LoggerFactory.getLogger(YingYangConverter.class);
+
     /**
      * 计算阴历日期参照1900年到2049年
      * 然后解释一下表中的数据，拿第一个0x04bd8来说吧，他是5个16进制数，共20bit。最后四位，

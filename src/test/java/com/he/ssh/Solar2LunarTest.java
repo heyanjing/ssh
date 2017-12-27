@@ -1,6 +1,6 @@
 package com.he.ssh;
 
-import com.he.ssh.base.core.CalenderConverter;
+import com.he.ssh.base.core.YingYangConverter;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +25,7 @@ public class Solar2LunarTest {
 
     @Test
     public void test() {
-        CalenderConverter.yang2ying("20180216");
+        YingYangConverter.yang2ying("20180216");
 
         //region Description
        /*

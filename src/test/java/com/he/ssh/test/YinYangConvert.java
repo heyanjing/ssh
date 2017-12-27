@@ -1,6 +1,6 @@
 package com.he.ssh.test;
 
-import com.he.ssh.base.core.CalenderConverter;
+import com.he.ssh.base.core.YingYangConverter;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ public class YinYangConvert {
     public void test() throws Exception {
 //        log.info(CalenderConverter.ying2yang("20171107"));
 //        System.out.println(CalendarUtil.lunarToSolar("20171107", false));
-        log.info(CalenderConverter.ying2yang("19841021",true));
+        log.info(YingYangConverter.ying2yang("19841021",true));
         System.out.println(CalendarUtil.lunarToSolar("19841021", true));
 //        System.out.println("************");
 //        System.out.println(CalendarUtil.solarToLunar("19000923"));

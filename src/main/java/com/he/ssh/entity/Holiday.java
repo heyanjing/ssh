@@ -17,8 +17,8 @@ public class Holiday extends BaseEntityWithStringId {
 
     private String localDateStr;//日期字符串
     private LocalDate localDate;//日期
-    private Integer type;//日期类型  ONE("法定节假日", 1), TWO("休息日", 2),THREE("工作日", 3), FOUR("调休工作日", 4),FIVE("调休休息日", 5),
-    private String typeStr;//日期类型字符串 SIX("元旦", 6), SEVEN("春节", 7),EIGHT("清明节", 8), NINE("劳动节", 9),TEN("端午节",10), ELEVEN("中秋节",11),TWELVE("国庆节",12),
+    private Integer type;//日期类型
+    private String typeStr;//日期类型字符串
     private Integer totalDay;//当年的总天数
     private Integer holidayType;//节假日类型
     private String holidayTypeStr;//节假日类型字符串
