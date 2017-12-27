@@ -41,7 +41,7 @@
         </logger>
         -->
 
-        <Root level="debug">
+        <Root level="info">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="FILE_NAME"/>
         </Root>
